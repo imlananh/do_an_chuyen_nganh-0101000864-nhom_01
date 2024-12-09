@@ -27,7 +27,7 @@ Dự án này là một Hệ Thống Tưới Cây Tự Động Theo Thời Gian 
 - Cảm biến lưu lượng YF-S201
 - Cảm biến mực nước (phao)
 - 2 relay để điều khiển bơm
-- Động cơ bơm nước 12V
+- Động cơ R385
 - Nút nhấn và đèn LED chỉ thị
 
 ## Cài Đặt
@@ -58,7 +58,6 @@ Dự án này là một Hệ Thống Tưới Cây Tự Động Theo Thời Gian 
 ## Sử Dụng
 1. **Chế Độ Auto:**
    - Thiết lập thời gian tưới
-   - Đặt số lần tưới
    - Cài đặt lưu lượng nước
    - Hệ thống sẽ tự động vận hành
 
@@ -72,16 +71,3 @@ Dự án này là một Hệ Thống Tưới Cây Tự Động Theo Thời Gian 
   - Lưu lượng nước tưới ra
   - Tổng lưu lượng được tưới
   - Các thông số môi trường
-
-## Đóng Góp
-Mọi đóng góp để cải thiện dự án đều được chào đón. Vui lòng tạo pull request hoặc báo cáo issues.
-
-## License
-[MIT License](LICENSE)
-
-## Tác Giả
-[Tên tác giả]
-
-## Lời Cảm Ơn
-- Cảm ơn EOH Platform cho nền tảng E-Ra IoT
-- Cảm ơn cộng đồng Arduino và ESP32 cho các tài nguyên hữu ích
