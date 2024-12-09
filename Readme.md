@@ -1,0 +1,102 @@
+Hệ Thống Tưới Cây Tự Động Thông Minh Sử Dụng ESP32 và Nền Tảng E-Ra
+Giới Thiệu
+Dự án này là một hệ thống tưới cây tự động thông minh sử dụng ESP32 và nền tảng E-Ra IoT. Hệ thống có thể tự động tưới cây dựa trên độ ẩm đất, lưu lượng nước và các thiết lập thời gian, đồng thời cho phép giám sát và điều khiển từ xa thông qua giao diện web.
+Tính Năng
+
+Hai Chế Độ Hoạt Động:
+
+Chế độ Auto: Tự động tưới theo lịch và điều kiện cài đặt
+Chế độ Manual: Điều khiển thủ công qua nút nhấn hoặc app
+
+
+Giám Sát Thông Số:
+
+Độ ẩm đất
+Nhiệt độ và độ ẩm không khí
+Lưu lượng nước tưới
+Mực nước trong bể chứa
+
+
+Điều Khiển Thông Minh:
+
+Lập lịch tưới tự động
+Đặt lưu lượng nước cho mỗi lần tưới
+Thiết lập khoảng thời gian và số lần tưới
+Tự động dừng khi đạt lưu lượng hoặc độ ẩm đủ
+
+
+
+Phần Cứng
+
+ESP32 Development Board
+Cảm biến độ ẩm đất
+Cảm biến DHT11 (nhiệt độ và độ ẩm)
+Cảm biến lưu lượng YF-S201
+Cảm biến mực nước (phao)
+2 relay để điều khiển bơm
+Động cơ bơm nước 12V
+Nút nhấn và đèn LED chỉ thị
+
+Cài Đặt
+
+Yêu Cầu Phần Cứng:
+
+Kết nối các cảm biến và thiết bị theo sơ đồ
+Cấp nguồn 12V cho động cơ bơm
+Cấp nguồn cho ESP32
+
+
+Cài Đặt Phần Mềm:
+cppCopy// Cài đặt thư viện
+- ERa library
+- DHT sensor library
+- Time library
+- Preferences library
+
+Cấu Hình:
+cppCopy// Thông tin WiFi
+const char ssid[] = "YOUR_WIFI_SSID";
+const char pass[] = "YOUR_WIFI_PASSWORD";
+
+// Token ERA
+#define ERA_AUTH_TOKEN "YOUR_ERA_TOKEN"
+
+
+Sử Dụng
+
+Chế Độ Auto:
+
+Thiết lập thời gian tưới
+Đặt số lần tưới
+Cài đặt lưu lượng nước
+Hệ thống sẽ tự động vận hành
+
+
+Chế Độ Manual:
+
+Sử dụng nút nhấn hoặc app để điều khiển
+Có thể bật/tắt riêng từng bơm
+
+
+
+Giám Sát
+
+Theo dõi qua giao diện E-Ra:
+
+Trạng thái hoạt động
+Lưu lượng nước tưới ra
+Tổng lưu lượng được tưới
+Các thông số môi trường
+
+
+
+Đóng Góp
+Mọi đóng góp để cải thiện dự án đều được chào đón. Vui lòng tạo pull request hoặc báo cáo issues.
+License
+MIT License
+Tác Giả
+[Tên tác giả]
+Lời Cảm Ơn
+
+Cảm ơn EOH Platform cho nền tảng E-Ra IoT
+Cảm ơn cộng đồng Arduino và ESP32 cho các tài nguyên hữu ích
