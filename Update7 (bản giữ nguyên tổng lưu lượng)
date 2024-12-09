@@ -30,8 +30,8 @@
 #include <time.h>
 #include <Preferences.h>
 
-const char ssid[] = "HUAWEIY9PRIME2019";  // Tên Wi-Fi của bạn
-const char pass[] = "yesido08";  // Mật khẩu Wi-Fi của bạn
+const char ssid[] = "your_wifi";  // Tên Wi-Fi của bạn
+const char pass[] = "your_password";  // Mật khẩu Wi-Fi của bạn
 
 #define VN_TIMEZONE 7
 #define TIMEZONE_OFFSET VN_TIMEZONE * 3600
