@@ -1,3 +1,4 @@
+//Phương pháp dựa trên cây trồng Sử dụng độ ẩm đất + CWSI, không xét thời tiết
 #include <DHT.h>
 #include <WiFi.h>
 
