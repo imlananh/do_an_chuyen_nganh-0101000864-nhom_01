@@ -56,48 +56,41 @@ Dự án này là một Hệ Thống Tưới Cây Tự Động Theo Thời Gian 
    ```
 
 
-## Sử Dụng
+Tôi sẽ viết lại phần các bước sử dụng một cách chung chung và dễ hiểu hơn:
 
-### Nguyên Lý Hoạt Động
+## Hướng Dẫn Sử Dụng
 
-1. **Chế Độ Auto:**
-   * Hoạt động hoàn toàn tự động với hai động cơ độc lập
-   * **Động cơ bơm:**
-     - Hoạt động theo thời gian đặt trước
-     - Tự động bơm khi phao báo hết nước
-     - Tự động dừng khi phao báo đầy nước
-   * **Động cơ tưới:**
-     - Hoạt động theo lưu lượng đặt (VD: 3000ml)
-     - Tự động tạm dừng khi hết nước
-     - Tự động tiếp tục khi có nước trở lại
-     - Dừng hoàn toàn khi đạt đủ lưu lượng đặt
+### 1. Khởi động hệ thống
+- Kết nối nguồn điện cho hệ thống
+- Kiểm tra kết nối WiFi
+- Kiểm tra giao diện E-Ra đã sẵn sàng
 
-2. **Chế Độ Manual:**
-   * Điều khiển trực tiếp qua:
-     - Nút nhấn trên board mạch
-     - Giao diện E-Ra
-   * **Cơ chế an toàn:**
-     - Động cơ bơm tự động dừng khi phao báo đầy
-     - Động cơ tưới tự động dừng khi phao báo hết nước
-   * Có thể bật/tắt riêng từng động cơ
+### 2. Lựa chọn chế độ hoạt động
+#### Chế độ Auto
+- Đặt lịch thời gian cho động cơ bơm:
+  + Chọn giờ, phút, ngày tháng năm mong muốn
+  + Hệ thống sẽ bắt đầu bơm tại thời điểm này
+- Đặt lưu lượng nước cho động cơ tưới:
+  + Nhập lượng nước cần tưới (ví dụ: 3000ml)
+  + Hệ thống sẽ tự động dừng khi đạt đủ lưu lượng
 
-### Các Bước Sử Dụng
+#### Chế độ Manual
+- Chuyển sang chế độ Manual qua app hoặc nút nhấn
+- Điều khiển trực tiếp các động cơ theo nhu cầu
+- Theo dõi hoạt động qua đèn LED chỉ thị
 
-1. **Chế Độ Auto:**
-   * Thiết lập thời gian tưới
-   * Cài đặt lưu lượng nước
-   * Hệ thống sẽ tự động vận hành
+### 3. Giám sát hoạt động
+- Quan sát các thông số trên giao diện:
+  + Trạng thái động cơ
+  + Lưu lượng nước
+  + Các thông số môi trường
+- Kiểm tra các cảnh báo (nếu có)
 
-2. **Chế Độ Manual:**
-   * Sử dụng nút nhấn hoặc app để điều khiển
-   * Có thể bật/tắt riêng từng bơm
+### 4. Điều chỉnh khi cần
+- Thay đổi thời gian hoặc lưu lượng nước
+- Chuyển đổi giữa các chế độ
+- Can thiệp thủ công nếu cần thiết
 
-### Giám Sát
-* Theo dõi qua giao diện E-Ra:
-   * Trạng thái hoạt động
-   * Lưu lượng nước tưới ra
-   * Tổng lưu lượng được tưới
-   * Các thông số môi trường
 ## Về Dự Báo Thời Tiết
 Trong quá trình phát triển, chúng tôi đã nghiên cứu và thử nghiệm ba phương pháp bổ sung:
 
