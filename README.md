@@ -4,12 +4,11 @@
 
 | STT | Họ và tên | MSSV | Lớp | Vai trò |
 |-----|-----------|------|------|----------|
-| 1 | Đặng Hoàng Phương Uyên | 225481024 | 22DHTT05 | Nhóm Trưởng |
-| 2 | Phạm Trần Lan Anh | 225481094 | 22DHTT02 | Thành Viên |
-| 3 | Đàm Thị Ngọc Minh | 225481098 | 22DHTT02 | Thành Viên |
-| 4 | Trần Đình Anh Duy | 225481024 | 22DHTT05 | Thành Viên |
-| 5 | Văn Hồng Quân | 225481025 | 22DHTT06 | Thành Viên |
-
+| 1 | Đặng Hoàng Phương Uyên | 225481024 | 22ĐHTT05 | Nhóm Trưởng |
+| 2 | Phạm Trần Lan Anh | 225481094 | 22ĐHTT02 | Thành Viên |
+| 3 | Đàm Thị Ngọc Minh | 225481098 | 22ĐHTT02 | Thành Viên |
+| 4 | Trần Đình Anh Duy | 225481024 | 22ĐHTT05 | Thành Viên |
+| 5 | Văn Hồng Quân | 225481025 | 22ĐHTT06 | Thành Viên |
 
 ## Giới Thiệu
 Dự án này là một Hệ Thống Tưới Cây Tự Động Theo Thời Gian Dựa Vào Dự Báo Thời Tiết và nền tảng E-Ra IoT. Hệ thống có thể tự động tưới cây dựa trên độ ẩm đất, lưu lượng nước và các thiết lập thời gian, đồng thời cho phép giám sát và điều khiển từ xa thông qua giao diện web.
@@ -37,7 +36,7 @@ Dự án này là một Hệ Thống Tưới Cây Tự Động Theo Thời Gian 
 - Cảm biến DHT11 (nhiệt độ và độ ẩm)
 - Cảm biến lưu lượng YF-S201
 - Cảm biến mực nước (phao)
-- 2 relay để điều khiển bơm
+- Relay Module (2 channel)
 - Động cơ R385
 - Nút nhấn và đèn LED chỉ thị
 
@@ -151,4 +150,6 @@ Sau khi thử nghiệm các phương pháp, chúng tôi nhận thấy mỗi phư
 - Độ ổn định cao
 - Khả năng mở rộng và tích hợp trong tương lai
 
-Các phương pháp khác sẽ được tiếp tục nghiên cứu và phát triển để tích hợp vào hệ thống trong các phiên bản nâng cấp sau.
+## Liên Hệ
+
+Nếu bạn có bất kỳ cần Tài khoản đăng nhập và mật khẩu giao diện E-Ra, vui lòng liên hệ với chúng tôi qua email: [2254810246@vaa.edu.vn](mailto:2254810246@vaa.edu.vn).
