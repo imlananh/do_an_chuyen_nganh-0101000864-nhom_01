@@ -51,8 +51,11 @@ Dự án này là một Hệ Thống Tưới Cây Tự Động Theo Thời Gian 
    // Cài đặt thư viện
    - ERa library
    - DHT sensor library
-   - Time library
+   - WiFi library
+   - TimeLib library
    - Preferences library
+   - HTTPClient library
+   - ArduinoJson library
    ```
 
 3. **Cấu Hình:**
