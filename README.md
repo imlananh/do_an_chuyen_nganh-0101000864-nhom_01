@@ -65,9 +65,6 @@ Dự án này là một Hệ Thống Tưới Cây Tự Động Theo Thời Gian 
    #define ERA_AUTH_TOKEN "YOUR_ERA_TOKEN"
    ```
 
-
-Tôi sẽ viết lại phần các bước sử dụng một cách chung chung và dễ hiểu hơn:
-
 ## Hướng Dẫn Sử Dụng
 
 ### 1. Khởi động hệ thống
