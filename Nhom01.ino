@@ -19,7 +19,7 @@
 // You should get Auth Token in the ERa App or ERa Dashboard
 #define ERA_AUTH_TOKEN "437cb40d-826f-4b7d-b0b9-f720066331c2"
 
-#define SOIL_VERY_WET 700    // Đất đủ ẩm, dừng tưới (giá trị cao)
+#define SOIL_VERY_WET 3000    // Đất đủ ẩm, dừng tưới (giá trị cao)
 #define SOIL_VERY_DRY 0      // Đất khô, cần tưới (giá trị thấp)
 
 #include <Arduino.h>
