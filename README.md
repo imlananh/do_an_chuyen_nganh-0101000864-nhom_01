@@ -71,7 +71,7 @@ Dự án này là một Hệ Thống Tưới Cây Tự Động Theo Thời Gian 
   - Lưu lượng nước tưới ra
   - Tổng lưu lượng được tưới
   - Các thông số môi trường
-## Phương Pháp Nghiên Cứu
+## Về Dự Báo Thời Tiết
 Trong quá trình phát triển, chúng tôi đã nghiên cứu và thử nghiệm ba phương pháp bổ sung:
 
 ### 1. Phương Pháp Dự Báo Thời Tiết Dựa Trên Cảm Biến
