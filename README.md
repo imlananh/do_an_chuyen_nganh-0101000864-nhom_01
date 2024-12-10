@@ -152,4 +152,4 @@ Sau khi thử nghiệm các phương pháp, chúng tôi nhận thấy mỗi phư
 
 ## Liên Hệ
 
-Nếu bạn có bất kỳ cần Tài khoản đăng nhập và mật khẩu giao diện E-Ra, vui lòng liên hệ với chúng tôi qua email: [2254810246@vaa.edu.vn](mailto:2254810246@vaa.edu.vn)
+Nếu bạn có bất kỳ cần Tài khoản đăng nhập và mật khẩu giao diện E-Ra, vui lòng liên hệ qua email: [2254810246@vaa.edu.vn](mailto:2254810246@vaa.edu.vn)
