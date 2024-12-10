@@ -19,7 +19,7 @@
 // You should get Auth Token in the ERa App or ERa Dashboard
 #define ERA_AUTH_TOKEN "437cb40d-826f-4b7d-b0b9-f720066331c2"
 
-#define SOIL_VERY_WET 3000    // Đất đủ ẩm, dừng tưới (giá trị cao)
+#define SOIL_VERY_WET 700    // Đất đủ ẩm, dừng tưới (giá trị cao)
 #define SOIL_VERY_DRY 0      // Đất khô, cần tưới (giá trị thấp)
 
 #include <Arduino.h>
@@ -29,9 +29,10 @@
 #include <TimeLib.h>
 #include <time.h>
 #include <Preferences.h>
+#include <ERa.h>
 
-const char ssid[] = "YOUR_WIFI_SSID";  // Tên Wi-Fi của bạn
-const char pass[] = "YOUR_WIFI_PASSWORD";  // Mật khẩu Wi-Fi của bạn
+const char ssid[] = "HUAWEIY9PRIME2019";  // Tên Wi-Fi của bạn
+const char pass[] = "yesido08";  // Mật khẩu Wi-Fi của bạn
 
 #define VN_TIMEZONE 7
 #define TIMEZONE_OFFSET VN_TIMEZONE * 3600
@@ -102,16 +103,11 @@ int b = 0;  // Phút bật đèn
 int c = 0;  // Ngày
 int d = 0;   // Tháng
 int e = 0; // Năm
-int f = 0;   // Số phút đèn sáng sau khi bật
-int g = 0;   // Khoảng cách phút trước khi đèn sáng lại
-int h = 0; // Số lần cần lặp lại (h = 0 thì không lặp lại)
 int i = 0; 
 int j = 0; 
 int k = 0; 
 int l = 0; 
 
-int remainingIntervals = 0;  // Đếm khoảng tưới lại còn lại
-int remainingCycles = 0;     // Đếm số lần còn lại
 bool isWateringComplete = false;
 bool wateringInProgress = false;
 
@@ -159,22 +155,7 @@ ERA_WRITE(V5) {
     preferences.putInt("year", e);
 }
 
-ERA_WRITE(V6) { 
-    f = param.getInt(); 
-    preferences.putInt("duration", f);
-}
 
-ERA_WRITE(V7) { 
-    g = param.getInt();
-    remainingIntervals = g;  // Khởi tạo đếm ngược khoảng tưới
-    ERa.virtualWrite(V7, remainingIntervals);  // Cập nhật lên ERA
-}
-
-ERA_WRITE(V8) { 
-    h = param.getInt();
-    remainingCycles = h;  // Khởi tạo đếm ngược số lần
-    ERa.virtualWrite(V8, remainingCycles);  // Cập nhật lên ERA
-}
 
 ERA_WRITE(V23) { 
     l = param.getInt(); 
@@ -245,23 +226,6 @@ ERA_WRITE(V17) {
      totalMilliLitres = 0;
    }
 
-   // Logic dừng tưới sau thời gian f phút
-   if (timeinfo.tm_min == b + f) {
-     digitalWrite(relay, LOW);
-     digitalWrite(led1, LOW);
-     ERa.virtualWrite(V20, LOW);
-
-     // Cập nhật chu kỳ tưới tiếp theo nếu còn
-     if (h > 0) {
-       b = b + g;  // Tăng thời gian theo khoảng tưới
-       if(b > 59){
-         b = b - 60;  // Reset phút về 0-59
-         a++;         // Tăng giờ
-       }
-       h--;  // Giảm số lần tưới còn lại
-     }
-   }
-
    // Xử lý mực nước thấp
    if(reading == LOW){
        digitalWrite(relay1, HIGH);
@@ -308,7 +272,7 @@ ERA_WRITE(V21) {
 
 void resetSchedule() {
     preferences.clear();
-    a = b = c = d = e = f = g = h = l = 0;
+    a = b = c = d = e = l = 0;
     
     // Cập nhật lên ERA
     ERa.virtualWrite(V1, 0);
@@ -316,9 +280,6 @@ void resetSchedule() {
     ERa.virtualWrite(V3, 0);
     ERa.virtualWrite(V4, 0);
     ERa.virtualWrite(V5, 0);
-    ERa.virtualWrite(V6, 0);
-    ERa.virtualWrite(V7, 0);
-    ERa.virtualWrite(V8, 0);
     ERa.virtualWrite(V23, 0);
 }
 
@@ -414,9 +375,9 @@ void sendFlowData() {
             currentFlowMilliLitres = 0;
             
             // Dừng bơm khi đạt lưu lượng
-            digitalWrite(relay, LOW);
-            digitalWrite(led1, LOW);
-            ERa.virtualWrite(V20, LOW);
+            digitalWrite(relay, MOTOR_OFF);
+            digitalWrite(led1, MOTOR_OFF);
+            ERa.virtualWrite(V20, MOTOR_OFF);
             
             Serial.printf("Đạt lưu lượng đặt. Tổng: %lu ml\n", accumulatedFlowMilliLitres);
         }
@@ -437,11 +398,7 @@ void sendFlowData() {
 }
 
 // Thêm hàm reset lưu lượng hiện tại khi bắt đầu tưới mới
-void startNewWatering() {
-    currentFlowMilliLitres = 0;  // Reset lưu lượng hiện tại
-    ERa.virtualWrite(V10, 0);    // Cập nhật lên ERA
-    Serial.println("Bắt đầu tưới mới - Reset lưu lượng");
-}
+
 
 // Thêm hàm reset tổng lưu lượng (tùy chọn)
 void resetTotalFlow() {
@@ -535,70 +492,6 @@ bool checkScheduleSet() {
     return false;
 }
 
-// Hàm xử lý chu kỳ tưới
-void handleWateringCycle() {
-    struct tm timeinfo;
-    if (!getLocalTime(&timeinfo)) {
-        return;
-    }
-
-    if (toggleState == LOW) { // Chế độ Auto
-        // Nếu đang trong quá trình tưới
-        if (wateringInProgress) {
-            // Kiểm tra điều kiện dừng tưới
-            if ((4095-value) > 1000 || totalMilliLitres >= l) {
-                wateringInProgress = false;
-                isWateringComplete = true;
-                stopWatering();
-                
-                // Giảm số lần tưới còn lại
-                if (remainingCycles > 0) {
-                    remainingCycles--;
-                    ERa.virtualWrite(V8, remainingCycles);
-                    
-                    // Reset khoảng tưới lại nếu còn lần tưới tiếp theo
-                    if (remainingCycles > 0) {
-                        remainingIntervals = g;
-                        ERa.virtualWrite(V7, remainingIntervals);
-                    }
-                }
-            }
-        }
-        // Nếu đến giờ tưới và có nước
-        else if (timeinfo.tm_hour == a && timeinfo.tm_min == b && reading == HIGH && !wateringInProgress) {
-            if (remainingCycles > 0) {
-                startWatering();
-                wateringInProgress = true;
-            }
-        }
-
-        // Đếm ngược khoảng tưới lại
-        static int lastMinute = -1;
-        if (timeinfo.tm_min != lastMinute) {
-            lastMinute = timeinfo.tm_min;
-            if (remainingIntervals > 0 && !wateringInProgress) {
-                remainingIntervals--;
-                ERa.virtualWrite(V7, remainingIntervals);
-                
-                // Nếu hết thời gian chờ và còn lần tưới
-                if (remainingIntervals == 0 && remainingCycles > 0) {
-                    // Cập nhật thời gian tưới tiếp theo
-                    a = timeinfo.tm_hour;
-                    b = timeinfo.tm_min + 1;
-                    if (b >= 60) {
-                        b = 0;
-                        a++;
-                        if (a >= 24) {
-                            a = 0;
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-
 void printLocalTime() {
     struct tm timeinfo;
     if (!getLocalTime(&timeinfo)) {
@@ -655,14 +548,11 @@ void printLocalTime() {
 
         // LOGIC TƯỚI CÂY - theo độ ẩm và các thông số tưới
         if (soilMoisture <= SOIL_VERY_DRY && !waterRunning && reading == HIGH) {
-            // Kiểm tra các thông số tưới đã được đặt
-            if (f > 0 && g > 0 && h > 0) {
-                digitalWrite(MOTOR_WATER, MOTOR_ON);
-                digitalWrite(led1, HIGH);
-                ERa.virtualWrite(V20, HIGH);
-                waterRunning = true;
-                Serial.println("Đất khô, bắt đầu tưới theo lịch");
-            }
+            digitalWrite(MOTOR_WATER, MOTOR_ON);
+            digitalWrite(led1, HIGH);
+            ERa.virtualWrite(V20, HIGH);
+            waterRunning = true;
+            Serial.println("Đất khô, bắt đầu tưới theo lịch");
         }
         
         if (waterRunning && (soilMoisture >= SOIL_VERY_WET || reading == LOW)) {
@@ -785,7 +675,6 @@ int nextWateringMinute = 0;          // Phút tưới tiếp theo
 
 // Hàm tính thời gian tưới tiếp theo
 void calculateNextWateringTime() {
-    nextWateringMinute = b + g;  // g là khoảng tưới lại
     nextWateringHour = a;
     
     // Xử lý khi phút vượt quá 59
@@ -800,7 +689,6 @@ void calculateNextWateringTime() {
     }
 }
 
-// Sửa lại hàm kiểm tra và thực hiện tưới
 void handleAutoWatering() {
     struct tm timeinfo;
     if (!getLocalTime(&timeinfo)) {
@@ -810,46 +698,34 @@ void handleAutoWatering() {
 
     // Kiểm tra điều kiện tưới
     if (toggleState == LOW && reading == HIGH) {  // Chế độ Auto và có nước
-        // Kiểm tra đến giờ tưới chưa
+        // Đúng thời gian tưới
         if (timeinfo.tm_hour == a && timeinfo.tm_min == b && !isWatering) {
-            if (currentCycle < h || h == 0) {  // h là số lần tưới (0 = không giới hạn)
-                startWatering();
-                currentCycle++;
-                Serial.printf("Bắt đầu chu kỳ tưới %d\n", currentCycle);
-            }
+            startNewWatering();
+            isWatering = true;
         }
-        
-        // Kiểm tra kết thúc thời gian tưới
-        if (isWatering) {
-            // Tính thời gian đã tưới (f là số phút tưới)
-            int wateringMinutes = (timeinfo.tm_hour * 60 + timeinfo.tm_min) - 
-                                (a * 60 + b);
-            if (wateringMinutes < 0) wateringMinutes += 24 * 60;
-            
-            // Kiểm tra điều kiện dừng
-            if (wateringMinutes >= f || totalMilliLitres >= l) {  // l là lưu lượng max
-                stopWatering();
-                
-                // Tính thời gian cho lần tưới tiếp theo
-                if (currentCycle < h || h == 0) {
-                    calculateNextWateringTime();
-                    a = nextWateringHour;
-                    b = nextWateringMinute;
-                    Serial.printf("Lần tưới tiếp theo: %02d:%02d\n", a, b);
-                }
+
+        // DỪNG BƠM TƯỚI HOÀN TOÀN khi đạt lưu lượng
+        if (isWatering && totalMilliLitres >= l) {
+            stopWatering();
+            isWatering = false;
+            //Nếu độ ẩm đất vẫn thấp, không kích hoạt động cơ nữa
+            if ((4095-value) <= SOIL_VERY_DRY) {
+              Serial.println("Độ ẩm đất vẫn thấp, không tưới thêm");
             }
         }
     }
 }
 
 // Hàm bắt đầu tưới
-void startWatering() {
-    if ((4095-value) <= 1000) {
+void startNewWatering() {
+    if ((4095-value) <= SOIL_VERY_DRY) {
         digitalWrite(relay, HIGH);
         digitalWrite(led1, HIGH);
         ERa.virtualWrite(V20, HIGH);
         totalMilliLitres = 0;
-        Serial.println("Bắt đầu tưới");
+        currentFlowMilliLitres = 0;  // Reset lưu lượng hiện tại
+        ERa.virtualWrite(V10, 0);    // Cập nhật lên ERA
+        Serial.println("Bắt đầu tưới mới - Reset lưu lượng");
     }
 }
 
@@ -877,9 +753,6 @@ void setup() {
    c = preferences.getInt("day", 0);
    d = preferences.getInt("month", 0);
    e = preferences.getInt("year", 0);
-   f = preferences.getInt("duration", 0);
-   g = preferences.getInt("interval", 0);
-   h = preferences.getInt("repeat", 0);
    l = preferences.getInt("flow", 0);
    
    ERa.begin(ssid, pass);
@@ -925,9 +798,6 @@ void setup() {
    ERa.virtualWrite(V3, c);
    ERa.virtualWrite(V4, d);
    ERa.virtualWrite(V5, e);
-   ERa.virtualWrite(V6, f);
-   ERa.virtualWrite(V7, g);
-   ERa.virtualWrite(V8, h);
    ERa.virtualWrite(V23, l);
 
    attachInterrupt(digitalPinToInterrupt(sensorPin), pulseCounter, FALLING);
@@ -938,8 +808,6 @@ void setup() {
    accumulatedFlowMilliLitres = preferences.getULong("totalFlow", 0);
    ERa.virtualWrite(V11, accumulatedFlowMilliLitres);
 
-   remainingIntervals = 0;
-   remainingCycles = 0;
    isWateringComplete = false;
    wateringInProgress = false;
 }
@@ -962,15 +830,12 @@ void updateMotorStatus() {
    }
 }
 
-
 void loop() {
    ERa.run();
    timer.run();
-   handleWateringCycle();
    th();
    doamdat();
    phao();
-   handleWateringCycle();  // Thêm vào đây
    check_button();
    check_button1();
    check_button2();
