@@ -92,6 +92,7 @@ unsigned long oldTime = 0;
 //unsigned long accumulatedMilliLitres = 0;
 unsigned long currentFlowMilliLitres = 0;  // Lưu lượng hiện tại của lần tưới
 unsigned long accumulatedFlowMilliLitres = 0;  // Tổng lưu lượng tích lũy
+bool flowLimitReached = false;
 
 
 Preferences preferences;
@@ -110,6 +111,8 @@ int l = 0;
 
 bool isWateringComplete = false;
 bool wateringInProgress = false;
+// Biến cho chế độ Auto
+bool pumpCycleStarted = false;  // Đánh dấu đã bắt đầu chu kỳ bơm
 
 boolean buttonState = HIGH;       // Trạng thái của nút nhấn (HIGH là không nhấn, LOW là nhấn)
 boolean lastButtonState = HIGH;   // Trạng thái trước đó của nút nhấn
@@ -163,91 +166,98 @@ ERA_WRITE(V23) {
 }
 
 ERA_WRITE(V17) {
- struct tm timeinfo;
- if (!getLocalTime(&timeinfo)) {
-     Serial.println("Không thể lấy thông tin thời gian");
-     return;
- }
- 
- i = param.getInt();
- if(i==1||i==0){
-   toggleState = !toggleState;  
-   
-   ERa.virtualWrite(V18, toggleState);  
-   digitalWrite(led, toggleState);
-   
-   toggleState1 = LOW;
-   toggleState2 = LOW;
-   digitalWrite(led1, LOW); 
-   digitalWrite(led2, LOW);
-   digitalWrite(relay, LOW);
-   digitalWrite(relay1, LOW);
-   
-   ERa.virtualWrite(V19, 0);
-   ERa.virtualWrite(V20, 0);
-   ERa.virtualWrite(V21, 0);
-   ERa.virtualWrite(V22, 0);
-   
-   if(!toggleState) {
-     // Reset schedule khi chuyển sang Auto
-     resetSchedule();
-   }
- }
-
- if (toggleState == LOW) {
-   Serial.println("Chế độ hiện tại: Auto");
-   if (!checkScheduleSet()) {
+   struct tm timeinfo;
+   if (!getLocalTime(&timeinfo)) {
+       Serial.println("Không thể lấy thông tin thời gian");
        return;
    }
 
-   // Kiểm tra đúng thời gian đặt
-   if ((timeinfo.tm_year + 1900) == e || e == -1) {
-     if ((timeinfo.tm_mon + 1) == d || d == -1) {
-       if (timeinfo.tm_mday == c || c == -1) {
-         if (timeinfo.tm_hour == a || a == -1) {
-           if (timeinfo.tm_min == b) {
-             if(reading == HIGH && (4095-value) <= 1000) {
-               digitalWrite(relay, HIGH);
-               digitalWrite(led1, HIGH);
-               ERa.virtualWrite(V20, HIGH);
-             }
-           }
-         }
-       }
-     }
-   }
-
-   // Kiểm tra lưu lượng
-   if(totalMilliLitres >= l){
-     digitalWrite(relay, LOW);
-     digitalWrite(led1, LOW);
-     ERa.virtualWrite(V20, LOW);
-     delay(3000);
-     totalMilliLitres = 0;
-   }
-
-   // Xử lý mực nước thấp
-   if(reading == LOW){
-       digitalWrite(relay1, HIGH);
-       digitalWrite(led2, HIGH);
-       ERa.virtualWrite(V22, HIGH);
-       // Tắt bơm tưới khi không có nước
+   i = param.getInt();
+   if(i==1||i==0) {
+       toggleState = !toggleState;  
+       
+       ERa.virtualWrite(V18, toggleState);  
+       digitalWrite(led, toggleState);
+       
+       toggleState1 = LOW;
+       toggleState2 = LOW;
+       digitalWrite(led1, LOW); 
+       digitalWrite(led2, LOW);
        digitalWrite(relay, LOW);
-       digitalWrite(led1, LOW);
-       ERa.virtualWrite(V20, LOW);
+       digitalWrite(relay1, LOW);
+       
+       ERa.virtualWrite(V19, 0);
+       ERa.virtualWrite(V20, 0);
+       ERa.virtualWrite(V21, 0);
+       ERa.virtualWrite(V22, 0);
    }
 
-   // Kiểm tra độ ẩm đất
-   if((4095-value) > 1000){   
-      digitalWrite(relay, LOW);
-      digitalWrite(led1, LOW);
-      ERa.virtualWrite(V20, LOW);
-   }
+   if (toggleState == LOW) {  // Chế độ Auto
+       Serial.println("Chế độ hiện tại: Auto");
+       if (!checkScheduleSet()) {
+           return;
+       }
 
- } else { // Chế độ Manual
-   Serial.println("Chế độ hiện tại: Manual");
- }
+       // Kiểm tra thời điểm bắt đầu chu kỳ bơm
+       if ((timeinfo.tm_year + 1900) == e || e == -1) {
+           if ((timeinfo.tm_mon + 1) == d || d == -1) {
+               if (timeinfo.tm_mday == c || c == -1) {
+                   if (timeinfo.tm_hour == a || a == -1) {
+                       if (timeinfo.tm_min == b) {
+                           pumpCycleStarted = true;  // Đánh dấu bắt đầu chu kỳ
+                           Serial.println("Đã đến thời điểm bắt đầu chu kỳ bơm");
+                           if(reading == LOW) {
+                               digitalWrite(relay1, HIGH);
+                               digitalWrite(led2, HIGH);
+                               ERa.virtualWrite(V22, HIGH);
+                           }
+                       }
+                   }
+               }
+           }
+       }
+
+       // Logic điều khiển bơm - sau thời điểm bắt đầu
+       if (pumpCycleStarted) {
+           if (reading == LOW) {  // Nếu hết nước
+               digitalWrite(relay1, HIGH);
+               digitalWrite(led2, HIGH);
+               ERa.virtualWrite(V22, HIGH);
+               Serial.println("Phát hiện hết nước - BẬT bơm");
+               // Tạm dừng tưới khi không có nước
+               digitalWrite(relay, LOW);
+               digitalWrite(led1, LOW);
+               ERa.virtualWrite(V20, LOW);
+           } else {  // Nếu đủ nước
+               digitalWrite(relay1, LOW);
+               digitalWrite(led2, LOW);
+               ERa.virtualWrite(V22, LOW);
+               Serial.println("Phát hiện đủ nước - TẮT bơm");
+               
+               // Kiểm tra điều kiện tưới
+               if (totalMilliLitres < l && (4095-value) <= 1000) {
+                   digitalWrite(relay, HIGH);
+                   digitalWrite(led1, HIGH);
+                   ERa.virtualWrite(V20, HIGH);
+                   Serial.println("Tiếp tục tưới - chưa đạt lưu lượng");
+               }
+           }
+       }
+
+       // Kiểm tra điều kiện dừng tưới  
+       if (totalMilliLitres >= l) {
+           digitalWrite(relay, LOW);
+           digitalWrite(led1, LOW);
+           ERa.virtualWrite(V20, LOW);
+           Serial.printf("Đạt lưu lượng đặt %d ml - Dừng tưới hoàn toàn\n", l);
+       }
+
+   } else { // Chế độ Manual
+       Serial.println("Chế độ hiện tại: Manual");
+       pumpCycleStarted = false;  // Reset flag khi chuyển sang Manual
+   }
 }
+
 ERA_WRITE(V19) {
     if (toggleState == HIGH) {
         j = param.getInt();
@@ -315,20 +325,21 @@ void doamdat() {
     Serial.print("Do am dat = ");
     Serial.print(soilMoisture);
     
-    // Kiểm tra và tự động tưới ở chế độ Auto
-    if(toggleState == LOW) { // Chế độ Auto
-        if(reading == HIGH) { // Nếu có nước trong bồn
-            if(soilMoisture <= SOIL_VERY_DRY) { // Đất khô thì tưới 
-                digitalWrite(MOTOR_WATER, MOTOR_ON);
-                digitalWrite(led1, HIGH);
-                ERa.virtualWrite(V20, HIGH);
-                Serial.println("Dat kho, bat dau tuoi!");
-            }
-            else if(soilMoisture >= SOIL_VERY_WET) { // Đất đủ ẩm thì dừng
-                digitalWrite(MOTOR_WATER, MOTOR_OFF);
-                digitalWrite(led1, LOW);
-                ERa.virtualWrite(V20, LOW);
-                Serial.println("Dat du am, dung tuoi");
+    if (toggleState == LOW && pumpCycleStarted) {  // Chế độ Auto và đã qua thời điểm bắt đầu
+        if (reading == HIGH) {  // Có nước trong bồn
+            if (totalMilliLitres < l) {  // Chưa đạt lưu lượng
+                if (soilMoisture <= SOIL_VERY_DRY) {  // Đất khô
+                    digitalWrite(MOTOR_WATER, MOTOR_ON);
+                    digitalWrite(led1, HIGH);
+                    ERa.virtualWrite(V20, HIGH);
+                    Serial.println("Dat kho, bat dau tuoi!");
+                }
+                else if (soilMoisture >= SOIL_VERY_WET) {  // Đất đủ ẩm
+                    digitalWrite(MOTOR_WATER, MOTOR_OFF);
+                    digitalWrite(led1, LOW);
+                    ERa.virtualWrite(V20, LOW);
+                    Serial.println("Dat du am, dung tuoi");
+                }
             }
         }
     }
@@ -342,6 +353,7 @@ void pulseCounter() {
 // Thêm biến đếm thời gian không có flow
 unsigned long noFlowStartTime = 0;
 #define NO_FLOW_TIMEOUT 5000  // 5 giây không có flow = hết nước
+
 void sendFlowData() {
     unsigned long currentTime = millis();
 
@@ -365,6 +377,8 @@ void sendFlowData() {
 
         // Kiểm tra nếu đạt lưu lượng đặt
         if (currentFlowMilliLitres >= l) {
+            // Đánh dấu đã đạt lưu lượng
+            flowLimitReached = true;
             // Cộng vào tổng lưu lượng
             accumulatedFlowMilliLitres += l;
             
@@ -381,14 +395,6 @@ void sendFlowData() {
             
             Serial.printf("Đạt lưu lượng đặt. Tổng: %lu ml\n", accumulatedFlowMilliLitres);
         }
-
-        // Debug
-        Serial.print("Lưu lượng hiện tại: ");
-        Serial.print(currentFlowMilliLitres);
-        Serial.print(" ml, Tổng tích lũy: ");
-        Serial.print(accumulatedFlowMilliLitres);
-        Serial.println(" ml");
-
         pulseCount = 0;
 
         // Cập nhật lên ERA
@@ -743,9 +749,8 @@ void setup() {
    // Khởi tạo NVS
    preferences.begin("scheduler", false);
 
-   isWatering = false;
-   currentCycle = 0;
-   lastWateringTime = 0;
+   flowLimitReached = false;  // Khởi tạo flag
+
    
    // Đọc các giá trị đã lưu
    a = preferences.getInt("hour", 0);
@@ -775,6 +780,7 @@ void setup() {
    toggleState = LOW;
    toggleState1 = LOW;
    toggleState2 = LOW;
+   pumpCycleStarted = false;
    
    digitalWrite(led, LOW);
    digitalWrite(led1, LOW);
@@ -808,8 +814,6 @@ void setup() {
    accumulatedFlowMilliLitres = preferences.getULong("totalFlow", 0);
    ERa.virtualWrite(V11, accumulatedFlowMilliLitres);
 
-   isWateringComplete = false;
-   wateringInProgress = false;
 }
 
 // Hàm cập nhật trạng thái động cơ lên ERA
@@ -839,5 +843,5 @@ void loop() {
    check_button();
    check_button1();
    check_button2();
-   updateMotorStatus(); // Thêm hàm cập nhật vào loop
+   updateMotorStatus();
 }
