@@ -46,19 +46,21 @@ float calculateCWSI(float Tc, float Ta) {
 
 // Hàm logic mờ cho tưới tiêu (dựa trên CWSI và độ ẩm đất)
 int fuzzyLogic(float CWSI, int soilMoisture, float tempForecast, float humidityForecast, bool isRain) {
-  // Kiểm tra dự báo thời tiết
-  if (isRain) {
-    return 0;  // Nếu có mưa, không cần tưới
-  }
+    // Kiểm tra dự báo thời tiết
+    if (isRain) {
+        return 0;  // Nếu có mưa, không cần tưới
+    }
 
-  if (tempForecast > 30.0 || CWSI > 0.6 || soilMoisture < 300) {
-    return 2;  // Tưới nhiều nếu nhiệt độ cao hoặc CWSI > 0.6
-  } else if ((CWSI >= 0.2 && CWSI < 0.6) || (soilMoisture >= 300 && soilMoisture <= 600)) {
-    return 1;  // Tưới vừa phải
-  } else {
-    return 0;  // Không tưới nếu không cần thiết
-  }
+    // Kiểm tra các điều kiện tưới nước
+    if (tempForecast > 30.0 || CWSI > 0.6 || soilMoisture < 1000) {
+        return 2;  // Tưới nhiều nếu nhiệt độ cao hoặc CWSI > 0.6
+    } else if ((CWSI >= 0.2 && CWSI < 0.6) || (soilMoisture >= 1000 && soilMoisture <= 2999)) {
+        return 1;  // Tưới vừa phải nếu CWSI từ 0.2 đến 0.6 hoặc độ ẩm đất từ 1000 đến 2999
+    } else {
+        return 0;  // Không tưới nếu CWSI nhỏ hơn 0.2 và độ ẩm đất lớn hơn 3000
+    }
 }
+
 
 // Hàm lấy dữ liệu dự báo thời tiết từ OpenWeatherMap
 void getWeatherForecast(float& tempForecast, float& humidityForecast, bool& isRain) {
