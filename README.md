@@ -84,7 +84,6 @@ Tôi sẽ viết lại phần các bước sử dụng một cách chung chung v
   + Trạng thái động cơ
   + Lưu lượng nước
   + Các thông số môi trường
-- Kiểm tra các cảnh báo (nếu có)
 
 ### 4. Điều chỉnh khi cần
 - Thay đổi thời gian hoặc lưu lượng nước
