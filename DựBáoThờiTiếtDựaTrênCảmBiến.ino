@@ -1,3 +1,4 @@
+//Phương pháp dự báo thời tiết dựa trên cảm biến
 #include <DHT.h>
 #include <WiFi.h>
 
