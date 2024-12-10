@@ -4,11 +4,11 @@
 
 | STT | Họ và tên | MSSV | Lớp | Vai trò |
 |-----|-----------|------|------|----------|
-| 1 | Đặng Hoàng Phương Uyên | 225481024 | 22ĐHTT05 | Nhóm Trưởng |
-| 2 | Phạm Trần Lan Anh | 225481094 | 22ĐHTT02 | Thành Viên |
-| 3 | Đàm Thị Ngọc Minh | 225481098 | 22ĐHTT02 | Thành Viên |
-| 4 | Trần Đình Anh Duy | 225481024 | 22ĐHTT05 | Thành Viên |
-| 5 | Văn Hồng Quân | 225481025 | 22ĐHTT06 | Thành Viên |
+| 1 | Đặng Hoàng Phương Uyên | 2254810214 | 22ĐHTT05 | Nhóm Trưởng |
+| 2 | Phạm Trần Lan Anh | 2254810094 | 22ĐHTT02 | Thành Viên |
+| 3 | Đàm Thị Ngọc Minh | 2254810098 | 22ĐHTT02 | Thành Viên |
+| 4 | Trần Đình Anh Duy | 2254810246 | 22ĐHTT05 | Thành Viên |
+| 5 | Văn Hồng Quân | 2254810255 | 22ĐHTT06 | Thành Viên |
 
 ## Giới Thiệu
 Dự án này là một Hệ Thống Tưới Cây Tự Động Theo Thời Gian Dựa Vào Dự Báo Thời Tiết và nền tảng E-Ra IoT. Hệ thống có thể tự động tưới cây dựa trên độ ẩm đất, lưu lượng nước và các thiết lập thời gian, đồng thời cho phép giám sát và điều khiển từ xa thông qua giao diện web.
