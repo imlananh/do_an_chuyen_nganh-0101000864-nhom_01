@@ -71,3 +71,54 @@ Dự án này là một Hệ Thống Tưới Cây Tự Động Theo Thời Gian 
   - Lưu lượng nước tưới ra
   - Tổng lưu lượng được tưới
   - Các thông số môi trường
+## Phương Pháp Nghiên Cứu
+Trong quá trình phát triển, chúng tôi đã nghiên cứu và thử nghiệm ba phương pháp bổ sung:
+
+### 1. Phương Pháp Dự Báo Thời Tiết Dựa Trên Cảm Biến
+* **Nguyên lý hoạt động:**
+  - Thu thập dữ liệu từ cảm biến DHT11
+  - Tính toán điểm sương
+  - Dự đoán khả năng mưa dựa trên độ ẩm và nhiệt độ
+* **Ưu điểm:**
+  - Không cần kết nối internet
+  - Phản ứng nhanh với thay đổi thời tiết
+  - Chi phí thấp
+* **Hạn chế:**
+  - Độ chính xác phụ thuộc vào cảm biến
+  - Phạm vi dự báo ngắn hạn
+
+### 2. Phương Pháp Dựa Trên Cây Trồng + API
+* **Nguyên lý hoạt động:**
+  - Kết hợp dữ liệu cây trồng với API thời tiết
+  - Sử dụng OpenWeatherMap cho dự báo
+  - Logic mờ ra quyết định tưới
+* **Ưu điểm:**
+  - Dự báo chính xác dài hạn
+  - Tích hợp nhiều nguồn dữ liệu
+  - Tối ưu hóa lịch tưới
+* **Hạn chế:**
+  - Yêu cầu kết nối internet ổn định
+  - Phụ thuộc dịch vụ bên thứ ba
+  - Chi phí vận hành cao hơn
+
+### 3. Phương Pháp Dựa Trên Cây Trồng (CWSI)
+* **Nguyên lý hoạt động:**
+  - Sử dụng chỉ số căng thẳng nước (CWSI)
+  - Đo độ ẩm đất trực tiếp
+  - Không phụ thuộc thời tiết
+* **Ưu điểm:**
+  - Phản ánh trực tiếp nhu cầu cây trồng
+  - Hoạt động độc lập
+  - Độ tin cậy cao
+* **Hạn chế:**
+  - Không dự đoán được điều kiện tương lai
+  - Yêu cầu cài đặt thông số cụ thể cho từng loại cây
+
+### Kết Luận Đánh Giá
+Sau khi thử nghiệm các phương pháp, chúng tôi nhận thấy mỗi phương pháp đều có những ưu điểm riêng. Tuy nhiên, phương pháp tưới theo thời gian kết hợp với nền tảng IoT được chọn là giải pháp chính vì:
+- Dễ triển khai và sử dụng
+- Chi phí hợp lý
+- Độ ổn định cao
+- Khả năng mở rộng và tích hợp trong tương lai
+
+Các phương pháp khác sẽ được tiếp tục nghiên cứu và phát triển để tích hợp vào hệ thống trong các phiên bản nâng cấp sau.
