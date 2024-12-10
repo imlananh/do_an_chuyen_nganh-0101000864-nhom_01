@@ -55,22 +55,49 @@ Dự án này là một Hệ Thống Tưới Cây Tự Động Theo Thời Gian 
    #define ERA_AUTH_TOKEN "YOUR_ERA_TOKEN"
    ```
 
+
 ## Sử Dụng
+
+### Nguyên Lý Hoạt Động
+
 1. **Chế Độ Auto:**
-   - Thiết lập thời gian tưới
-   - Cài đặt lưu lượng nước
-   - Hệ thống sẽ tự động vận hành
+   * Hoạt động hoàn toàn tự động với hai động cơ độc lập
+   * **Động cơ bơm:**
+     - Hoạt động theo thời gian đặt trước
+     - Tự động bơm khi phao báo hết nước
+     - Tự động dừng khi phao báo đầy nước
+   * **Động cơ tưới:**
+     - Hoạt động theo lưu lượng đặt (VD: 3000ml)
+     - Tự động tạm dừng khi hết nước
+     - Tự động tiếp tục khi có nước trở lại
+     - Dừng hoàn toàn khi đạt đủ lưu lượng đặt
 
 2. **Chế Độ Manual:**
-   - Sử dụng nút nhấn hoặc app để điều khiển
-   - Có thể bật/tắt riêng từng bơm
+   * Điều khiển trực tiếp qua:
+     - Nút nhấn trên board mạch
+     - Giao diện E-Ra
+   * **Cơ chế an toàn:**
+     - Động cơ bơm tự động dừng khi phao báo đầy
+     - Động cơ tưới tự động dừng khi phao báo hết nước
+   * Có thể bật/tắt riêng từng động cơ
 
-## Giám Sát
-- Theo dõi qua giao diện E-Ra:
-  - Trạng thái hoạt động
-  - Lưu lượng nước tưới ra
-  - Tổng lưu lượng được tưới
-  - Các thông số môi trường
+### Các Bước Sử Dụng
+
+1. **Chế Độ Auto:**
+   * Thiết lập thời gian tưới
+   * Cài đặt lưu lượng nước
+   * Hệ thống sẽ tự động vận hành
+
+2. **Chế Độ Manual:**
+   * Sử dụng nút nhấn hoặc app để điều khiển
+   * Có thể bật/tắt riêng từng bơm
+
+### Giám Sát
+* Theo dõi qua giao diện E-Ra:
+   * Trạng thái hoạt động
+   * Lưu lượng nước tưới ra
+   * Tổng lưu lượng được tưới
+   * Các thông số môi trường
 ## Về Dự Báo Thời Tiết
 Trong quá trình phát triển, chúng tôi đã nghiên cứu và thử nghiệm ba phương pháp bổ sung:
 
